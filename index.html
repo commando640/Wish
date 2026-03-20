@@ -5,12 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Chand Raat 2026 — For Areen 🌙</title>
 
-<!-- 🎵 Music file — put your music.mp3 in the SAME folder as this HTML file -->
-<audio id="bgMusic" loop preload="auto">
-  <source src="music.mp3" type="audio/mpeg">
-  <source src="music.ogg" type="audio/ogg">
-</audio>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -56,53 +50,8 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
   35%{transform:translateY(-55px) scale(1.4) rotate(5deg);opacity:1;}
   100%{transform:translateY(-140px) scale(.5) rotate(15deg);opacity:0;}}
 
-/* ════════════════════════════════════════
-   MUSIC BAR (bottom)
-════════════════════════════════════════ */
-#musicBar{
-  position:fixed;bottom:0;left:0;right:0;z-index:300;
-  height:48px;
-  background:linear-gradient(180deg,transparent,rgba(2,4,14,.96));
-  display:flex;align-items:center;justify-content:center;gap:.8rem;
-  opacity:0;transition:opacity .6s ease;pointer-events:none;
-}
-#musicBar.show{opacity:1;pointer-events:all;}
-#musicBar.show ~ .dots{bottom:58px;}
 
-.mb-wave{display:flex;gap:3px;align-items:flex-end;height:18px;}
-.mb-wave span{
-  display:block;width:3px;background:var(--gold);border-radius:2px;
-  transform-origin:bottom;
-}
-.mb-wave.playing span{animation:wave .8s ease-in-out infinite;}
-.mb-wave span:nth-child(1){animation-delay:0s;height:6px;}
-.mb-wave span:nth-child(2){animation-delay:.15s;height:12px;}
-.mb-wave span:nth-child(3){animation-delay:.3s;height:18px;}
-.mb-wave span:nth-child(4){animation-delay:.15s;height:10px;}
-.mb-wave span:nth-child(5){animation-delay:.05s;height:5px;}
-@keyframes wave{
-  0%,100%{transform:scaleY(.4);}50%{transform:scaleY(1);}}
-
-#musicBtn2{
-  background:transparent;border:none;cursor:pointer;
-  color:var(--gold);font-family:'Cinzel',serif;
-  font-size:.7rem;letter-spacing:.22em;
-  display:flex;align-items:center;gap:.5rem;
-  touch-action:manipulation;padding:.5rem 1rem;
-}
-.volume-slider{
-  -webkit-appearance:none;appearance:none;
-  width:80px;height:2px;
-  background:rgba(240,192,96,.3);
-  border-radius:2px;outline:none;cursor:pointer;
-}
-.volume-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;
-  border-radius:50%;background:var(--gold);cursor:pointer;
-}
-.volume-slider::-moz-range-thumb{
-  width:14px;height:14px;border-radius:50%;
-  background:var(--gold);cursor:pointer;border:none;}
+50%{transform:scaleY(1);}}
 
 /* ════════════════════════════════════════
    PAGE DOTS
@@ -364,51 +313,268 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
   font-size:clamp(.5rem,1.8vw,.62rem);letter-spacing:.22em;color:var(--dim);}
 
 /* ════════════════════════════════════════
-   GALLERY (Page 4)
+   GALLERY (Page 4) — Cinematic Redesign
 ════════════════════════════════════════ */
-.gallery-card{width:min(660px,96vw);background:var(--card-bg);
-  border:1px solid rgba(240,192,96,.26);
-  padding:clamp(2rem,7vw,3.5rem) clamp(1.6rem,6vw,3.5rem);
-  text-align:center;position:relative;overflow:hidden;
-  animation:cardIn .8s ease both;
-  box-shadow:0 0 60px rgba(240,192,96,.05),0 20px 60px rgba(0,0,0,.4);}
-.gallery-title{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,5.5vw,2rem);
-  font-style:italic;color:var(--gold2);margin-bottom:.4rem;}
-.gallery-sub{font-family:'Cinzel',serif;font-size:clamp(.6rem,2vw,.75rem);
-  letter-spacing:.35em;color:var(--dim);margin-bottom:1.8rem;}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.5rem;}
-.gallery-slot{
-  aspect-ratio:1/1;border:1px solid rgba(240,192,96,.22);
-  background:rgba(240,192,96,.04);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.4rem;
-  position:relative;overflow:hidden;
-  transition:border-color .35s,transform .25s;
+
+/* ── Outer wrapper ── */
+.gallery-wrap{
+  width:min(700px,98vw);
+  position:relative;
+  animation:cardIn .9s ease .2s both;
 }
-.gallery-slot:hover,.gallery-slot:active{
-  border-color:rgba(240,192,96,.55);transform:scale(1.02);}
-.gallery-slot img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;display:block;
-  transition:transform .4s ease;}
-.gallery-slot:hover img{transform:scale(1.07);}
-.slot-placeholder-wrap{
-  display:flex;flex-direction:column;align-items:center;gap:.3rem;
-  pointer-events:none;}
-.gallery-slot .slot-placeholder{
-  font-size:clamp(1.3rem,5vw,1.8rem);opacity:.35;}
-.gallery-slot .slot-label{font-family:'Cinzel',serif;
-  font-size:clamp(.42rem,1.6vw,.56rem);letter-spacing:.25em;color:var(--dim);}
-/* lightbox */
-#lightbox{position:fixed;inset:0;z-index:500;background:rgba(2,4,14,.95);
-  display:none;align-items:center;justify-content:center;padding:1.5rem;}
+
+/* ── Header ── */
+.gallery-header{
+  text-align:center;
+  margin-bottom:1.6rem;
+  padding:0 .5rem;
+}
+.gallery-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,6vw,2.5rem);
+  font-style:italic;color:var(--gold2);
+  line-height:1.15;
+  margin-bottom:.35rem;
+}
+.gallery-sub{
+  font-family:'Cinzel',serif;
+  font-size:clamp(.6rem,2.2vw,.75rem);
+  letter-spacing:.42em;color:var(--dim);
+}
+
+/* ── FEATURED big photo (top) ── */
+.gallery-featured{
+  width:100%;
+  aspect-ratio:16/9;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(240,192,96,.3);
+  background:#080c1e;
+  cursor:pointer;
+  margin-bottom:1px;
+}
+.gallery-featured::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(
+    to top,
+    rgba(2,4,14,.9) 0%,
+    rgba(2,4,14,.35) 38%,
+    transparent 65%
+  );
+  pointer-events:none;
+}
+.gallery-featured img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s cubic-bezier(.25,.46,.45,.94),opacity .6s ease;
+  transform-origin:center;
+}
+.gallery-featured:hover img{ transform:scale(1.04); }
+
+/* caption inside featured */
+.feat-caption{
+  position:absolute;bottom:0;left:0;right:0;z-index:3;
+  padding:clamp(1rem,3vw,1.6rem) clamp(1rem,3.5vw,1.8rem);
+}
+.feat-caption-quote{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.1rem,3.8vw,1.5rem);
+  font-style:italic;
+  color:var(--cream);
+  line-height:1.6;
+  margin-bottom:.4rem;
+  text-shadow:0 2px 12px rgba(0,0,0,.7);
+}
+.feat-caption-quote em{font-style:normal;color:var(--gold);}
+.feat-caption-meta{
+  font-family:'Cinzel',serif;
+  font-size:clamp(.52rem,1.8vw,.66rem);
+  letter-spacing:.3em;color:rgba(240,192,96,.6);
+}
+
+/* empty featured state */
+.feat-empty{
+  position:absolute;inset:0;z-index:3;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:.7rem;
+}
+.feat-empty-icon{font-size:clamp(2.5rem,8vw,4rem);opacity:.18;}
+.feat-empty-txt{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1rem,3.5vw,1.3rem);
+  font-style:italic;
+  color:rgba(255,249,238,.25);
+  text-align:center;
+  padding:0 1rem;
+}
+
+/* ── THUMBNAIL STRIP ── */
+.gallery-strip{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:2px;
+  margin-bottom:1.4rem;
+}
+.gallery-thumb{
+  aspect-ratio:1/1;
+  position:relative;overflow:hidden;
+  background:#060a18;
+  border:1px solid rgba(240,192,96,.12);
+  cursor:pointer;
+  transition:border-color .3s,transform .25s;
+}
+.gallery-thumb.active-thumb{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold);
+  transform:scale(1.04);
+  z-index:2;
+}
+.gallery-thumb img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:opacity .4s,transform .4s;
+}
+.gallery-thumb:hover img{transform:scale(1.1);}
+.gallery-thumb .thumb-empty{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;opacity:.15;
+}
+
+/* gold slide-indicator on active thumb */
+.gallery-thumb.active-thumb::after{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--gold);
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+
+/* ── Navigation arrows ── */
+.gallery-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;
+  padding:0 .2rem;
+}
+.nav-arr{
+  background:transparent;
+  border:1px solid rgba(240,192,96,.3);
+  color:rgba(240,192,96,.7);
+  font-size:1rem;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .3s;
+  touch-action:manipulation;flex-shrink:0;
+}
+.nav-arr:hover,.nav-arr:active{
+  background:rgba(240,192,96,.12);
+  border-color:var(--gold);color:var(--gold);
+}
+.nav-counter{
+  font-family:'Cinzel',serif;
+  font-size:clamp(.62rem,2.2vw,.78rem);
+  letter-spacing:.32em;color:var(--dim);
+  text-align:center;flex:1;
+}
+
+/* ── Romantic footer quote ── */
+.gallery-footer{
+  text-align:center;
+  padding:1rem 0 .2rem;
+  border-top:1px solid rgba(240,192,96,.1);
+}
+.gallery-footer-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1rem,3.5vw,1.2rem);
+  font-style:italic;
+  color:rgba(255,249,238,.55);
+  line-height:1.8;
+}
+.gallery-footer-quote em{font-style:normal;color:rgba(240,192,96,.65);}
+
+/* ── LIGHTBOX ── */
+#lightbox{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(2,4,14,.97);
+  display:none;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+}
 #lightbox.open{display:flex;}
-#lightbox img{max-width:100%;max-height:90vh;object-fit:contain;
-  border:1px solid rgba(240,192,96,.3);}
-#lightbox-close{position:fixed;top:1.2rem;right:1.2rem;background:transparent;
-  border:1px solid rgba(240,192,96,.4);color:var(--gold);
-  font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.22em;
-  padding:.5em 1em;cursor:pointer;z-index:501;touch-action:manipulation;}
+
+.lb-inner{
+  position:relative;
+  width:min(92vw,960px);
+  display:flex;flex-direction:column;
+  align-items:center;
+}
+#lbImg{
+  max-width:100%;
+  max-height:78vh;
+  object-fit:contain;
+  border:1px solid rgba(240,192,96,.25);
+  display:block;
+  animation:lbIn .4s ease both;
+}
+@keyframes lbIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+
+.lb-caption{
+  width:100%;
+  padding:.9rem 1rem .2rem;
+  text-align:center;
+}
+.lb-caption-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1rem,3.5vw,1.3rem);
+  font-style:italic;
+  color:rgba(255,249,238,.75);
+  line-height:1.6;
+}
+.lb-caption-text em{font-style:normal;color:var(--gold);}
+
+.lb-nav{
+  display:flex;align-items:center;gap:1.5rem;
+  margin-top:1rem;
+}
+.lb-arr{
+  background:transparent;
+  border:1px solid rgba(240,192,96,.3);
+  color:rgba(240,192,96,.7);
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .3s;font-size:1.2rem;
+  touch-action:manipulation;
+}
+.lb-arr:hover,.lb-arr:active{
+  background:rgba(240,192,96,.15);
+  border-color:var(--gold);color:var(--gold);
+}
+.lb-close{
+  position:fixed;top:1rem;right:1rem;z-index:502;
+  background:transparent;
+  border:1px solid rgba(240,192,96,.35);
+  color:rgba(240,192,96,.75);
+  font-family:'Cinzel',serif;
+  font-size:.65rem;letter-spacing:.25em;
+  padding:.55em 1.1em;
+  cursor:pointer;touch-action:manipulation;
+  transition:all .3s;
+}
+.lb-close:hover,.lb-close:active{
+  background:rgba(240,192,96,.15);color:var(--gold);
+}
+.lb-counter{
+  font-family:'Cinzel',serif;
+  font-size:.65rem;letter-spacing:.28em;
+  color:var(--dim);
+}
+
+/* swipe hint */
+.swipe-hint{
+  position:absolute;bottom:-.1rem;left:0;right:0;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-size:.55rem;letter-spacing:.28em;
+  color:rgba(240,192,96,.25);
+  animation:pulse 3s ease-in-out infinite;
+}
 
 /* ════════════════════════════════════════
    KEYFRAMES
@@ -424,11 +590,6 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
 </head>
 <body>
 
-<!-- Audio -->
-<audio id="bgMusic" loop preload="auto">
-  <source src="music.mp3" type="audio/mpeg">
-  <source src="music.ogg" type="audio/ogg">
-</audio>
 
 <!-- Sky & Fireworks -->
 <canvas id="skyC"></canvas>
@@ -436,8 +597,16 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
 
 <!-- Lightbox -->
 <div id="lightbox">
-  <button id="lightbox-close" onclick="closeLB()">✕ CLOSE</button>
-  <img id="lbImg" src="" alt="">
+  <button class="lb-close" onclick="closeLB()">✕ CLOSE</button>
+  <div class="lb-inner">
+    <img id="lbImg" src="" alt="">
+    <div class="lb-caption"><div class="lb-caption-text" id="lbCaption"></div></div>
+    <div class="lb-nav">
+      <button class="lb-arr" onclick="lbNav(-1)">&#8592;</button>
+      <span class="lb-counter" id="lbCounter">1 / 6</span>
+      <button class="lb-arr" onclick="lbNav(1)">&#8594;</button>
+    </div>
+  </div>
 </div>
 
 <!-- Moon -->
@@ -465,16 +634,7 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
   <div class="dot" onclick="goPage(4)" title="Gallery"></div>
 </div>
 
-<!-- Music bar -->
-<div id="musicBar">
-  <div class="mb-wave" id="mbWave">
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
-  <button id="musicBtn2" onclick="toggleMusic()">
-    <span id="musicLabel">🎵 MUSIC ON</span>
-  </button>
-  <input type="range" class="volume-slider" id="volSlider" min="0" max="1" step="0.05" value="0.5">
-</div>
+
 
 <!-- ════════════════════════════════════════
      INTRO
@@ -641,25 +801,52 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
 </div>
 
 <!-- ════════════════════════════════════════
-     PAGE 4 — PHOTO GALLERY
+     PAGE 4 — GALLERY (Cinematic)
 ════════════════════════════════════════ -->
 <div id="p4" class="page">
-  <div class="gallery-card">
-    <svg class="corner c-tl" viewBox="0 0 58 58" fill="none"><path d="M2 56L2 2L56 2" stroke="#f2c55c" stroke-width="1.5"/><circle cx="2" cy="2" r="3.2" fill="#f2c55c"/></svg>
-    <svg class="corner c-tr" viewBox="0 0 58 58" fill="none"><path d="M2 56L2 2L56 2" stroke="#f2c55c" stroke-width="1.5"/><circle cx="2" cy="2" r="3.2" fill="#f2c55c"/></svg>
-    <svg class="corner c-bl" viewBox="0 0 58 58" fill="none"><path d="M2 56L2 2L56 2" stroke="#f2c55c" stroke-width="1.5"/><circle cx="2" cy="2" r="3.2" fill="#f2c55c"/></svg>
-    <svg class="corner c-br" viewBox="0 0 58 58" fill="none"><path d="M2 56L2 2L56 2" stroke="#f2c55c" stroke-width="1.5"/><circle cx="2" cy="2" r="3.2" fill="#f2c55c"/></svg>
+  <div class="gallery-wrap">
 
-    <div class="cbody">
-      <div class="gallery-title">📷 &nbsp; Our Memories</div>
-      <div class="gallery-sub">✦ &nbsp; photo1.jpg → photo6.jpg &nbsp; ✦</div>
-      <div class="gallery-grid" id="galleryGrid"></div>
-      <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,3.5vw,1.2rem);font-style:italic;color:rgba(255,249,238,.65);margin-top:.5rem;">
-        Name your photos: photo1.jpg · photo2.jpg · photo3.jpg ... photo6.jpg and place them in the same folder as this file. 🌙
-      </p>
+    <!-- Header -->
+    <div class="gallery-header">
+      <div class="gallery-title">Our Memories</div>
+      <div class="gallery-sub">✦ &nbsp; frames of us &nbsp; ✦</div>
     </div>
+
+    <!-- Featured big view -->
+    <div class="gallery-featured" id="featuredSlot" onclick="openLBFromFeatured()">
+      <div class="feat-empty" id="featEmpty">
+        <span class="feat-empty-icon">🌙</span>
+        <span class="feat-empty-txt">Place photo1.jpg – photo6.jpg<br>in the same folder</span>
+      </div>
+      <img id="featImg" src="" alt="" style="display:none;opacity:0;">
+      <div class="feat-caption" id="featCaption" style="display:none;">
+        <div class="feat-caption-quote" id="featQuote"></div>
+        <div class="feat-caption-meta" id="featMeta"></div>
+      </div>
+      <div class="swipe-hint" id="swipeHint" style="display:none;">✦ &nbsp; swipe or use arrows &nbsp; ✦</div>
+    </div>
+
+    <!-- Thumbnail strip -->
+    <div class="gallery-strip" id="galleryStrip"></div>
+
+    <!-- Nav bar -->
+    <div class="gallery-nav">
+      <button class="nav-arr" onclick="galleryStep(-1)">&#8592;</button>
+      <span class="nav-counter" id="navCounter">— / —</span>
+      <button class="nav-arr" onclick="galleryStep(1)">&#8594;</button>
+    </div>
+
+    <!-- Footer quote -->
+    <div class="gallery-footer">
+      <div class="gallery-footer-quote">
+        Every moment with you is a memory I never want to forget.<br>
+        <em>These are the frames of us — forever mine to keep.</em> 🌙
+      </div>
+    </div>
+
   </div>
-  <button class="pg-btn" style="margin-top:1.5rem;" onclick="goPage(3)">← WISH WALL</button>
+
+  <button class="pg-btn" style="margin-top:1.8rem;" onclick="goPage(3)">← WISH WALL</button>
 </div>
 
 <script>
@@ -812,68 +999,7 @@ document.addEventListener('touchstart',e=>{
   spawnHeart(touch.clientX,touch.clientY);
 },{passive:true});
 
-/* ════════════════════════════════════════
-   MUSIC — plays from music.mp3 in same folder
-   Starts on FIRST touch/click (browser policy)
-════════════════════════════════════════ */
-const audio=document.getElementById('bgMusic');
-let musicStarted=false,musicOn=false;
-const TARGET_VOL=0.5;
-audio.volume=0;
 
-function fadeIn(targetVol,duration){
-  const steps=50;const stepTime=duration/steps;const stepVol=targetVol/steps;
-  let cur=0;
-  const iv=setInterval(()=>{
-    cur+=stepVol;audio.volume=Math.min(cur,targetVol);
-    if(cur>=targetVol) clearInterval(iv);
-  },stepTime);
-}
-function fadeOut(duration,cb){
-  const steps=30;const stepTime=duration/steps;const startVol=audio.volume;const stepVol=startVol/steps;
-  let cur=startVol;
-  const iv=setInterval(()=>{
-    cur-=stepVol;audio.volume=Math.max(cur,0);
-    if(cur<=0){clearInterval(iv);audio.pause();if(cb)cb();}
-  },stepTime);
-}
-
-function startMusic(){
-  if(musicStarted) return;
-  musicStarted=true;
-  audio.volume=0;
-  audio.play().then(()=>{
-    musicOn=true;
-    fadeIn(TARGET_VOL,2500);
-    updateMusicUI();
-  }).catch(()=>{/* no music.mp3 found - silently ignore */});
-}
-
-function toggleMusic(){
-  if(!musicStarted){startMusic();return;}
-  if(musicOn){
-    fadeOut(800);musicOn=false;
-  } else {
-    audio.volume=0;audio.play();fadeIn(TARGET_VOL,1500);musicOn=true;
-  }
-  updateMusicUI();
-}
-
-function updateMusicUI(){
-  const wave=document.getElementById('mbWave');
-  const lbl=document.getElementById('musicLabel');
-  if(musicOn){wave.classList.add('playing');lbl.textContent='🎵 MUSIC ON';}
-  else{wave.classList.remove('playing');lbl.textContent='🔇 MUSIC OFF';}
-}
-
-document.getElementById('volSlider').addEventListener('input',e=>{
-  const v=parseFloat(e.target.value);audio.volume=v;
-  if(v>0&&!musicOn){musicOn=true;updateMusicUI();}
-});
-
-// Start music on very first user interaction
-['touchstart','click','keydown'].forEach(ev=>{
-  document.addEventListener(ev,()=>startMusic(),{once:true,passive:true});
 });
 
 /* ════════════════════════════════════════
@@ -949,52 +1075,157 @@ function renderWishes(){
 renderWishes();
 
 /* ════════════════════════════════════════
-   PHOTO GALLERY
+   PHOTO GALLERY — Cinematic Redesign
 ════════════════════════════════════════ */
-// ── Gallery: Put photo1.jpg, photo2.jpg ... photo6.jpg in the SAME folder ──
-// Supported formats: .jpg .jpeg .png .webp
 const GALLERY_FILES=[
   'photo1.jpg','photo2.jpg','photo3.jpg',
   'photo4.jpg','photo5.jpg','photo6.jpg'
 ];
+// Romantic captions per photo slot
+const GALLERY_CAPTIONS=[
+  {quote:'You are my favourite kind of light — the kind that stays. 🌙', meta:'✦ always'},
+  {quote:'In every photograph, I see the universe smiling back at me.', meta:'✦ Fahim & Areen'},
+  {quote:'Time stops when I am with you. These moments are <em>forever</em>.', meta:'✦ forever yours'},
+  {quote:'Every memory with you feels like a dream I never want to wake from. 🌸', meta:'✦ Chand Raat 2026'},
+  {quote:'You make ordinary moments feel like <em>magic</em>. Always.', meta:'✦ with love'},
+  {quote:'My heart found its home the day it found <em>you</em>. ❤️', meta:'✦ Fahim'},
+];
+
+let galCurrent=0;
+let galLoaded=[];  // indices of photos that loaded successfully
 
 function buildGallery(){
-  const grid=document.getElementById('galleryGrid');
-  grid.innerHTML='';
-  GALLERY_FILES.forEach((fname)=>{
-    const slot=document.createElement('div');
-    slot.className='gallery-slot';
+  const strip=document.getElementById('galleryStrip');
+  strip.innerHTML='';
+  galLoaded=[];
+
+  GALLERY_FILES.forEach((fname,i)=>{
+    const thumb=document.createElement('div');
+    thumb.className='gallery-thumb';
+    thumb.id=`thumb-${i}`;
 
     const img=document.createElement('img');
     img.src=fname;
-    img.alt=fname;
-    img.style.display='none';
+    img.alt='';
 
-    const placeholder=document.createElement('div');
-    placeholder.className='slot-placeholder-wrap';
-    placeholder.innerHTML=`<span class="slot-placeholder">🌸</span><span class="slot-label">${fname}</span>`;
+    const empty=document.createElement('div');
+    empty.className='thumb-empty';
+    empty.textContent='🌸';
 
-    img.onload=function(){
-      placeholder.style.display='none';
-      img.style.display='block';
-      slot.onclick=()=>openLB(fname);
-      slot.style.cursor='pointer';
+    img.onload=()=>{
+      empty.style.display='none';
+      galLoaded.push(i);
+      galLoaded.sort((a,b)=>a-b);
+      thumb.appendChild(img);
+      if(galLoaded.length===1) showFeatured(i); // show first loaded
+      updateNavCounter();
     };
-    img.onerror=function(){
-      // image not found — show gentle placeholder
-      placeholder.innerHTML=`<span class="slot-placeholder" style="opacity:.25">📷</span><span class="slot-label" style="opacity:.3">${fname}</span>`;
+    img.onerror=()=>{
+      // not found — show empty slot gracefully
+      thumb.appendChild(empty);
     };
 
-    slot.appendChild(img);
-    slot.appendChild(placeholder);
-    grid.appendChild(slot);
+    thumb.addEventListener('click',()=>showFeatured(i));
+    strip.appendChild(thumb);
   });
 }
+
+function showFeatured(index){
+  galCurrent=index;
+  const fname=GALLERY_FILES[index];
+  const cap=GALLERY_CAPTIONS[index];
+  const featImg=document.getElementById('featImg');
+  const featEmpty=document.getElementById('featEmpty');
+  const featCaption=document.getElementById('featCaption');
+  const swipeHint=document.getElementById('swipeHint');
+
+  // fade out
+  featImg.style.opacity='0';
+  setTimeout(()=>{
+    featImg.src=fname;
+    featImg.style.display='block';
+    featImg.onload=()=>{
+      featEmpty.style.display='none';
+      featImg.style.opacity='1';
+      document.getElementById('featQuote').innerHTML=cap.quote;
+      document.getElementById('featMeta').textContent=cap.meta;
+      featCaption.style.display='block';
+      swipeHint.style.display='block';
+    };
+    featImg.onerror=()=>{
+      featImg.style.display='none';
+      featEmpty.style.display='flex';
+      featCaption.style.display='none';
+      swipeHint.style.display='none';
+    };
+  },200);
+
+  // CSS transition
+  featImg.style.transition='opacity .45s ease';
+
+  // update thumbs
+  document.querySelectorAll('.gallery-thumb').forEach((t,i)=>{
+    t.classList.toggle('active-thumb',i===index);
+  });
+  updateNavCounter();
+}
+
+function galleryStep(dir){
+  if(galLoaded.length===0) return;
+  const curIdx=galLoaded.indexOf(galCurrent);
+  let nextIdx=(curIdx+dir+galLoaded.length)%galLoaded.length;
+  showFeatured(galLoaded[nextIdx]);
+}
+
+function updateNavCounter(){
+  const total=GALLERY_FILES.length;
+  const loadedCount=galLoaded.length;
+  document.getElementById('navCounter').textContent=
+    loadedCount>0
+      ? `${galLoaded.indexOf(galCurrent)+1} of ${loadedCount} photos`
+      : '— photos —';
+}
+
 buildGallery();
 
-function openLB(src){
-  document.getElementById('lbImg').src=src;
+// Swipe support on featured image
+(function(){
+  const el=document.getElementById('featuredSlot');
+  let sx=0,sy=0;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+      galleryStep(dx<0?1:-1);
+    }
+  },{passive:true});
+})();
+
+/* ── LIGHTBOX ── */
+let lbCurrent=0;
+function openLBFromFeatured(){
+  if(galLoaded.length===0) return;
+  lbCurrent=galCurrent;
+  showLB(lbCurrent);
+}
+function showLB(i){
+  lbCurrent=i;
+  const img=document.getElementById('lbImg');
+  const cap=GALLERY_CAPTIONS[i];
+  img.style.opacity='0';
+  img.src=GALLERY_FILES[i];
+  img.onload=()=>{ img.style.opacity='1'; img.style.transition='opacity .35s ease'; };
+  document.getElementById('lbCaption').innerHTML=cap.quote;
+  document.getElementById('lbCounter').textContent=
+    `${galLoaded.indexOf(i)+1} / ${galLoaded.length}`;
   document.getElementById('lightbox').classList.add('open');
+}
+function lbNav(dir){
+  if(galLoaded.length===0) return;
+  const curIdx=galLoaded.indexOf(lbCurrent);
+  const nextIdx=(curIdx+dir+galLoaded.length)%galLoaded.length;
+  showLB(galLoaded[nextIdx]);
 }
 function closeLB(){
   document.getElementById('lightbox').classList.remove('open');
@@ -1002,6 +1233,17 @@ function closeLB(){
 document.getElementById('lightbox').addEventListener('click',e=>{
   if(e.target===document.getElementById('lightbox')) closeLB();
 });
+
+// Swipe in lightbox
+(function(){
+  const el=document.getElementById('lightbox');
+  let sx=0;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>45) lbNav(dx<0?1:-1);
+  },{passive:true});
+})();
 
 /* ════════════════════════════════════════
    PAGE NAVIGATION
@@ -1019,7 +1261,6 @@ document.getElementById('enterBtn').addEventListener('click',()=>{
   document.getElementById('intro').classList.add('gone');
   document.getElementById('moonEl').classList.add('show');
   document.getElementById('dots').classList.add('show');
-  document.getElementById('musicBar').classList.add('show');
   setTimeout(()=>{goPage(0);startFw();},650);
 });
 </script>
