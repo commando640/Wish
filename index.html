@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chand Raat — For Areen 🌙</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --gold: #f0c060;
+    --gold-light: #ffe49a;
+    --gold-dim: #a07830;
+    --sky-deep: #03060f;
+    --sky-mid: #080d1e;
+    --sky-dawn: #0d1535;
+    --moon-glow: rgba(255, 240, 180, 0.18);
+    --text-cream: #fff8e7;
+    --text-soft: #c9b87a;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--sky-deep);
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--text-cream);
+    cursor: none;
+  }
+
+  /* ── Custom Cursor ── */
+  .cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--gold); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s ease, opacity 0.3s;
+    box-shadow: 0 0 12px var(--gold), 0 0 30px rgba(240,192,96,0.4);
+  }
+  .cursor-ring {
+    position: fixed; width: 32px; height: 32px;
+    border: 1px solid rgba(240,192,96,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.25s ease, width 0.3s, height 0.3s;
+  }
+
+  /* ── Canvas sky ── */
+  #sky { position: fixed; inset: 0; z-index: 0; }
+
+  /* ── INTRO OVERLAY ── */
+  #intro {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--sky-deep);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  #intro.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
+  .intro-arabic {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    letter-spacing: 0.35em;
+    color: var(--gold-dim);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.5s forwards;
+  }
+  .intro-moon {
+    font-size: clamp(4rem, 14vw, 9rem);
+    line-height: 1;
+    filter: drop-shadow(0 0 40px rgba(255,230,120,0.6));
+    animation: moonPulse 3s ease-in-out infinite, fadeUp 1.2s ease 0.8s both;
+    opacity: 0;
+  }
+  .intro-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #c8941a);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 1.2rem 0 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.1s forwards;
+  }
+  .intro-sub {
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    letter-spacing: 0.2em;
+    color: var(--text-soft);
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.4s forwards;
+  }
+  .intro-btn {
+    margin-top: 3rem;
+    padding: 0.9em 3em;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.4s;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.8s forwards;
+  }
+  .intro-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.45s cubic-bezier(0.77,0,0.175,1);
+    z-index: 0;
+  }
+  .intro-btn:hover::before { transform: translateX(0); }
+  .intro-btn:hover { color: var(--sky-deep); }
+  .intro-btn span { position: relative; z-index: 1; }
+
+  /* ── MAIN SCENE ── */
+  #scene {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transition: opacity 1.5s ease 0.3s;
+    pointer-events: none;
+  }
+  #scene.visible { opacity: 1; pointer-events: all; }
+
+  /* ── Moon SVG ── */
+  .moon-wrap {
+    position: absolute;
+    top: clamp(20px, 8vh, 70px);
+    right: clamp(40px, 10vw, 140px);
+    width: clamp(80px, 14vw, 160px);
+    height: clamp(80px, 14vw, 160px);
+    animation: floatMoon 7s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 1s ease 1s;
+  }
+  #scene.visible .moon-wrap { opacity: 1; }
+  .moon-halo {
+    position: absolute; inset: -30%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,230,120,0.12) 0%, transparent 70%);
+    animation: haloBreath 4s ease-in-out infinite;
+  }
+  .moon-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 20px rgba(255,230,100,0.5)); }
+
+  /* ── Lanterns ── */
+  .lantern {
+    position: absolute;
+    animation: lanternFloat linear infinite;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+  }
+  #scene.visible .lantern { opacity: 1; }
+  .lantern svg { filter: drop-shadow(0 0 10px rgba(255,160,50,0.7)); }
+
+  /* ── Card ── */
+  .card {
+    position: relative;
+    width: min(680px, 94vw);
+    background: linear-gradient(160deg,
+      rgba(15,20,45,0.85) 0%,
+      rgba(8,12,28,0.92) 60%,
+      rgba(12,18,40,0.88) 100%);
+    border: 1px solid rgba(240,192,96,0.2);
+    backdrop-filter: blur(12px);
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 3.5rem);
+    text-align: center;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
+  }
+  #scene.visible .card { opacity: 1; transform: translateY(0); }
+
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(240,192,96,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(200,148,26,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Corner ornaments */
+  .card-corner {
+    position: absolute;
+    width: 50px; height: 50px;
+    opacity: 0.4;
+  }
+  .card-corner.tl { top: 12px; left: 12px; }
+  .card-corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
+  .card-corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+  .card-corner.br { bottom: 12px; right: 12px; transform: scale(-1); }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.6rem 0;
+  }
+  .divider-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(240,192,96,0.4), transparent);
+  }
+  .divider-star { color: var(--gold); font-size: 0.9rem; letter-spacing: 0.3em; }
+
+  /* Tag */
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* To name */
+  .to-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffe49a 0%, var(--gold) 50%, #c8941a 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Main wish text */
+  .wish-eid {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.7rem);
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin: 0.3rem 0 0.1rem;
+    text-shadow: 0 0 30px rgba(240,192,96,0.4);
+  }
+  .wish-mubarak {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    letter-spacing: 0.15em;
+    color: var(--text-cream);
+    font-weight: 600;
+    text-shadow: 0 0 40px rgba(255,255,255,0.15);
+  }
+
+  /* Message */
+  .message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-style: italic;
+    line-height: 1.9;
+    color: rgba(255,248,231,0.82);
+    margin: 0 auto;
+    max-width: 480px;
+  }
+  .message em {
+    font-style: normal;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  /* Signature */
+  .signature-wrap {
+    margin-top: 1.8rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  }
+  .signature-label {
+    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    font-family: 'Cinzel', serif;
+  }
+  .signature-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-style: italic;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+  }
+  .heart-beat {
+    font-size: 1.2rem;
+    animation: heartPulse 1.2s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  /* Shimmer sweep on card */
+  .card-shimmer {
+    position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(105deg, transparent 40%, rgba(240,192,96,0.04) 50%, transparent 60%);
+    animation: shimmerSweep 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Particles inside card */
+  .card-spark {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkFloat var(--dur, 6s) ease-in-out var(--del, 0s) infinite;
+  }
+
+  /* ── Page turn button ── */
+  .turn-btn {
+    position: fixed;
+    bottom: 2rem; left: 50%; transform: translateX(-50%);
+    z-index: 50;
+    background: transparent;
+    border: 1px solid rgba(240,192,96,0.35);
+    color: rgba(240,192,96,0.7);
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    padding: 0.6em 2em;
+    cursor: none;
+    transition: all 0.4s;
+    opacity: 0;
+  }
+  #scene.visible .turn-btn { opacity: 1; transition: opacity 1s ease 1.5s, color 0.4s, border-color 0.4s, background 0.4s; }
+  .turn-btn:hover {
+    background: rgba(240,192,96,0.12);
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* ── Page 2 – Poem / letter ── */
+  #page2 {
+    position: fixed; inset: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.8s ease;
+  }
+  #page2.visible { opacity: 1; pointer-events: all; }
+
+  .letter {
+    width: min(620px, 94vw);
+    background: linear-gradient(155deg, rgba(18,24,55,0.9), rgba(8,12,28,0.95));
+    border: 1px solid rgba(240,192,96,0.18);
+    backdrop-filter: blur(14px);
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 3.5rem);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .letter::before {
+    content: '"';
+    position: absolute; top: -0.2em; left: 0.2em;
+    font-family: 'Playfair Display', serif;
+    font-size: 12rem;
+    color: rgba(240,192,96,0.05);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .letter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .letter-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.2vw, 1.15rem);
+    line-height: 2;
+    color: rgba(255,248,231,0.85);
+    font-style: italic;
+  }
+  .letter-body p { margin-bottom: 1.2em; }
+  .letter-body em { font-style: normal; color: var(--gold); }
+  .letter-sign {
+    margin-top: 2rem;
+    text-align: right;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  /* ── back btn ── */
+  .back-btn {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    z-index: 55; background: transparent;
+    border: 1px solid rgba(240,192,96,0.3);
+    color: rgba(240,192,96,0.65);
+    font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em;
+    padding: 0.6em 2em; cursor: none; transition: all 0.4s;
+    display: none;
+  }
+  #page2.visible .back-btn { display: block; }
+  .back-btn:hover { background: rgba(240,192,96,0.1); color: var(--gold); border-color: var(--gold); }
+
+  /* ── Fireworks ── */
+  #fireworks { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes moonPulse { 0%,100% { filter:drop-shadow(0 0 30px rgba(255,230,120,0.5)); } 50% { filter:drop-shadow(0 0 60px rgba(255,230,120,0.9)); } }
+  @keyframes floatMoon { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-14px) rotate(2deg); } }
+  @keyframes haloBreath { 0%,100% { opacity:0.6; transform:scale(1); } 50% { opacity:1; transform:scale(1.1); } }
+  @keyframes lanternFloat {
+    0% { transform:translateY(110vh) rotate(var(--tilt,0deg)); opacity:0.8; }
+    10% { opacity:0.9; }
+    90% { opacity:0.7; }
+    100% { transform:translateY(-15vh) rotate(calc(var(--tilt,0deg) + 10deg)); opacity:0; }
+  }
+  @keyframes heartPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.3); } }
+  @keyframes shimmerSweep { 0% { left:-100%; } 60%,100% { left:160%; } }
+  @keyframes sparkFloat {
+    0% { transform:translate(0,0); opacity:0; }
+    10% { opacity:1; }
+    90% { opacity:0.5; }
+    100% { transform:translate(var(--dx,20px), var(--dy,-60px)); opacity:0; }
+  }
+  @keyframes twinkle { 0%,100% { opacity:var(--base,0.6); transform:scale(1); } 50% { opacity:1; transform:scale(1.4); } }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<!-- Sky canvas -->
+<canvas id="sky"></canvas>
+<!-- Fireworks canvas -->
+<canvas id="fireworks"></canvas>
+
+<!-- ── INTRO ── -->
+<div id="intro">
+  <div class="intro-arabic">✦ CHAND RAAT ✦</div>
+  <div class="intro-moon">🌙</div>
+  <div class="intro-name">Areen</div>
+  <div class="intro-sub">A gift of moonlight, just for you</div>
+  <button class="intro-btn" id="enterBtn"><span>OPEN YOUR GIFT ✦</span></button>
+</div>
+
+<!-- ── MAIN SCENE ── -->
+<div id="scene">
+  <!-- Moon -->
+  <div class="moon-wrap">
+    <div class="moon-halo"></div>
+    <svg class="moon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="moonGrad" cx="40%" cy="40%">
+          <stop offset="0%" stop-color="#ffe9a0"/>
+          <stop offset="60%" stop-color="#f0c060"/>
+          <stop offset="100%" stop-color="#c08020"/>
+        </radialGradient>
+      </defs>
+      <circle cx="50" cy="50" r="45" fill="url(#moonGrad)"/>
+      <circle cx="68" cy="42" r="42" fill="#03060f"/>
+    </svg>
+  </div>
+
+  <!-- Floating lanterns -->
+  <!-- generated by JS -->
+
+  <!-- Card -->
+  <div class="card">
+    <div class="card-shimmer"></div>
+
+    <!-- Sparks -->
+    <div class="card-spark" style="left:10%;top:20%;--dur:7s;--del:0s;--dx:15px;--dy:-50px;"></div>
+    <div class="card-spark" style="left:80%;top:70%;--dur:5s;--del:1.5s;--dx:-10px;--dy:-40px;"></div>
+    <div class="card-spark" style="left:50%;top:10%;--dur:8s;--del:0.8s;--dx:20px;--dy:-60px;"></div>
+    <div class="card-spark" style="left:25%;top:80%;--dur:6s;--del:2.2s;--dx:-15px;--dy:-55px;"></div>
+    <div class="card-spark" style="left:90%;top:30%;--dur:7s;--del:3s;--dx:-20px;--dy:-45px;"></div>
+
+    <!-- Corner ornaments -->
+    <svg class="card-corner tl" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 48 L2 2 L48 2" stroke="#f0c060" stroke-width="1" fill="none"/>
+      <path d="M2 24 Q14 14 24 2" stroke="#f0c060" stroke-width="0.8" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#f0c060"/>
+    </svg>
+    <svg class="card-corner tr" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 48 L2 2 L48 2" stroke="#f0c060" stroke-width="1" fill="none"/>
+      <path d="M2 24 Q14 14 24 2" stroke="#f0c060" stroke-width="0.8" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#f0c060"/>
+    </svg>
+    <svg class="card-corner bl" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 48 L2 2 L48 2" stroke="#f0c060" stroke-width="1" fill="none"/>
+      <path d="M2 24 Q14 14 24 2" stroke="#f0c060" stroke-width="0.8" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#f0c060"/>
+    </svg>
+    <svg class="card-corner br" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 48 L2 2 L48 2" stroke="#f0c060" stroke-width="1" fill="none"/>
+      <path d="M2 24 Q14 14 24 2" stroke="#f0c060" stroke-width="0.8" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#f0c060"/>
+    </svg>
+
+    <div class="tag">✦ &nbsp; A Moonlit Gift &nbsp; ✦</div>
+
+    <div class="to-name">Areen</div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-star">🌙 ✦ 🌙</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="wish-eid">Eid</div>
+    <div class="wish-mubarak">Mubarak</div>
+
+    <div class="divider" style="margin:1.2rem 0;">
+      <div class="divider-line"></div>
+      <div class="divider-star" style="font-size:0.6rem;">✦ ✦ ✦</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <p class="message">
+      On this <em>Chand Raat</em>, as the crescent moon rises above
+      and the lanterns light the sky — every star I see reminds me of
+      <em>you</em>. May this Eid bring you the same warmth and joy
+      you bring to me every single day.
+      <br><br>
+      You are my <em>favourite reason</em> to celebrate.
+    </p>
+
+    <div class="signature-wrap">
+      <span class="signature-label">with all my love</span>
+      <span class="signature-name">Fahim &nbsp;<span class="heart-beat">❤</span></span>
+    </div>
+  </div>
+
+  <button class="turn-btn" id="turnBtn">READ MY LETTER TO YOU &nbsp; ✦</button>
+</div>
+
+<!-- ── PAGE 2 – LETTER ── -->
+<div id="page2">
+  <div class="letter">
+    <div class="letter-title">A Letter Under the Moon</div>
+    <div class="letter-body">
+      <p>My dearest <em>Areen</em>,</p>
+      <p>
+        Tonight the sky belongs to you. Every star that blinked into existence
+        did so only to witness how beautiful you are — and the crescent moon
+        hangs there like a smile, the way I smile every time I think of you.
+      </p>
+      <p>
+        I have been searching for the right words all evening, but how do you
+        describe the colour of something that makes the world feel warmer just
+        by existing? You are that colour, <em>Areen</em>. You always have been.
+      </p>
+      <p>
+        This Chand Raat, I am not just wishing you a happy Eid. I am wishing
+        that every day ahead feels as magical as tonight's sky — full of light,
+        full of wonder, and full of a love that never dims.
+      </p>
+      <p>
+        Thank you for being the person I get to think of when I look up at the
+        moon. There is no better gift this world could have given me.
+      </p>
+      <p>
+        <em>Eid Mubarak, my love. Forever yours.</em>
+      </p>
+    </div>
+    <div class="letter-sign">— Fahim 🌙</div>
+  </div>
+  <button class="back-btn" id="backBtn">← BACK TO CARD</button>
+</div>
+
+<script>
+/* ── Cursor ── */
+const cur = document.getElementById('cur');
+const curRing = document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+(function animRing(){
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  curRing.style.left=rx+'px'; curRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+/* ── Sky + Stars ── */
+const skyCanvas = document.getElementById('sky');
+const skyCtx = skyCanvas.getContext('2d');
+let W, H, stars=[], shootStars=[];
+
+function resize(){
+  W = skyCanvas.width = window.innerWidth;
+  H = skyCanvas.height = window.innerHeight;
+  buildStars();
+}
+
+function buildStars(){
+  stars = Array.from({length:220}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    r: Math.random()*1.4+0.3,
+    base: Math.random()*0.5+0.3,
+    phase: Math.random()*Math.PI*2,
+    speed: Math.random()*0.012+0.004
+  }));
+}
+
+function drawSky(){
+  const grad = skyCtx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#03060f');
+  grad.addColorStop(0.5,'#070c1c');
+  grad.addColorStop(1,'#0b1228');
+  skyCtx.fillStyle = grad;
+  skyCtx.fillRect(0,0,W,H);
+}
+
+let t=0;
+function drawStars(){
+  t += 0.008;
+  stars.forEach(s => {
+    const alpha = s.base + Math.sin(t*s.speed*60 + s.phase)*0.35;
+    skyCtx.beginPath();
+    skyCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    skyCtx.fillStyle = `rgba(255,248,220,${Math.max(0,Math.min(1,alpha))})`;
+    skyCtx.fill();
+  });
+}
+
+// Shooting stars
+function spawnShoot(){
+  shootStars.push({
+    x: Math.random()*W*0.7, y: Math.random()*H*0.3,
+    vx: 8+Math.random()*6, vy: 4+Math.random()*4,
+    len: 100+Math.random()*80,
+    life: 1, decay: 0.025
+  });
+}
+setInterval(spawnShoot, 3500);
+
+function drawShootStars(){
+  shootStars = shootStars.filter(s => s.life > 0);
+  shootStars.forEach(s => {
+    const grad = skyCtx.createLinearGradient(s.x, s.y, s.x-s.len, s.y-s.len*0.5);
+    grad.addColorStop(0, `rgba(255,248,200,${s.life})`);
+    grad.addColorStop(1, `rgba(255,248,200,0)`);
+    skyCtx.strokeStyle = grad;
+    skyCtx.lineWidth = 1.5;
+    skyCtx.beginPath();
+    skyCtx.moveTo(s.x, s.y);
+    skyCtx.lineTo(s.x - s.len, s.y - s.len*0.5);
+    skyCtx.stroke();
+    s.x += s.vx; s.y += s.vy; s.life -= s.decay;
+  });
+}
+
+(function loop(){
+  drawSky(); drawStars(); drawShootStars();
+  requestAnimationFrame(loop);
+})();
+
+window.addEventListener('resize', resize);
+resize();
+
+/* ── Lanterns ── */
+function makeLantern(){
+  const scene = document.getElementById('scene');
+  const colours = ['#ff8c2a','#ff5a1a','#ffb830','#ff4060','#ff9050'];
+  const col = colours[Math.floor(Math.random()*colours.length)];
+  const size = 28+Math.random()*20;
+  const left = 5+Math.random()*88;
+  const dur = 12+Math.random()*10;
+  const delay = Math.random()*18;
+  const tilt = (Math.random()-0.5)*20;
+
+  const el = document.createElement('div');
+  el.className = 'lantern';
+  el.style.cssText = `left:${left}%;bottom:0;--tilt:${tilt}deg;animation-duration:${dur}s;animation-delay:${delay}s;`;
+  el.innerHTML = `<svg width="${size}" height="${size*1.5}" viewBox="0 0 40 60" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="0" x2="20" y2="6" stroke="${col}" stroke-width="1.5"/>
+    <ellipse cx="20" cy="10" rx="8" ry="3" fill="${col}" opacity="0.8"/>
+    <path d="M12 10 Q8 30 12 48 Q20 54 28 48 Q32 30 28 10 Z" fill="${col}" opacity="0.75"/>
+    <ellipse cx="20" cy="48" rx="8" ry="3" fill="${col}" opacity="0.8"/>
+    <line x1="20" y1="51" x2="20" y2="58" stroke="${col}" stroke-width="1"/>
+    <ellipse cx="20" cy="30" rx="5" ry="8" fill="rgba(255,255,180,0.35)"/>
+  </svg>`;
+  scene.appendChild(el);
+  return el;
+}
+for(let i=0;i<10;i++) makeLantern();
+
+/* ── Fireworks ── */
+const fwCanvas = document.getElementById('fireworks');
+const fwCtx = fwCanvas.getContext('2d');
+fwCanvas.width = window.innerWidth; fwCanvas.height = window.innerHeight;
+window.addEventListener('resize', ()=>{ fwCanvas.width=window.innerWidth; fwCanvas.height=window.innerHeight; });
+
+let particles=[];
+function burst(x,y){
+  const hue = [48,38,55,180,320][Math.floor(Math.random()*5)];
+  for(let i=0;i<70;i++){
+    const ang = Math.random()*Math.PI*2;
+    const spd = 2+Math.random()*5;
+    particles.push({
+      x,y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
+      life:1, decay:0.018+Math.random()*0.01,
+      r:1.5+Math.random()*2, hue
+    });
+  }
+}
+
+let fwActive = false;
+let fwInterval;
+
+function startFireworks(){
+  fwActive = true;
+  fwInterval = setInterval(()=>{
+    const x = W*0.15 + Math.random()*W*0.7;
+    const y = H*0.1 + Math.random()*H*0.45;
+    burst(x, y);
+  }, 900);
+}
+
+function animFW(){
+  fwCtx.fillStyle = 'rgba(3,6,15,0.25)';
+  fwCtx.fillRect(0,0,fwCanvas.width,fwCanvas.height);
+  particles = particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.life-=p.decay;
+    fwCtx.beginPath();
+    fwCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    fwCtx.fillStyle=`hsla(${p.hue},90%,70%,${p.life})`;
+    fwCtx.fill();
+  });
+  requestAnimationFrame(animFW);
+}
+animFW();
+
+/* ── Navigation ── */
+document.getElementById('enterBtn').addEventListener('click', ()=>{
+  document.getElementById('intro').classList.add('hidden');
+  setTimeout(()=>{
+    document.getElementById('scene').classList.add('visible');
+    startFireworks();
+    setTimeout(()=>{
+      clearInterval(fwInterval); fwActive=false;
+    }, 6000);
+  }, 600);
+});
+
+document.getElementById('turnBtn').addEventListener('click', ()=>{
+  document.getElementById('scene').style.opacity='0';
+  document.getElementById('scene').style.pointerEvents='none';
+  setTimeout(()=>{ document.getElementById('page2').classList.add('visible'); },500);
+});
+
+document.getElementById('backBtn').addEventListener('click', ()=>{
+  document.getElementById('page2').classList.remove('visible');
+  setTimeout(()=>{
+    document.getElementById('scene').style.opacity='';
+    document.getElementById('scene').style.pointerEvents='';
+  },500);
+});
+</script>
+</body>
+</html>
