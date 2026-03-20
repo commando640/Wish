@@ -376,24 +376,29 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
   font-style:italic;color:var(--gold2);margin-bottom:.4rem;}
 .gallery-sub{font-family:'Cinzel',serif;font-size:clamp(.6rem,2vw,.75rem);
   letter-spacing:.35em;color:var(--dim);margin-bottom:1.8rem;}
-.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.5rem;}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.5rem;}
 .gallery-slot{
-  aspect-ratio:4/3;border:1px solid rgba(240,192,96,.25);
-  background:rgba(240,192,96,.05);
+  aspect-ratio:1/1;border:1px solid rgba(240,192,96,.22);
+  background:rgba(240,192,96,.04);
   display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:.5rem;
-  cursor:pointer;position:relative;overflow:hidden;
-  transition:border-color .3s;touch-action:manipulation;
+  flex-direction:column;gap:.4rem;
+  position:relative;overflow:hidden;
+  transition:border-color .35s,transform .25s;
 }
-.gallery-slot:hover,.gallery-slot:active{border-color:rgba(240,192,96,.5);}
-.gallery-slot img{width:100%;height:100%;object-fit:cover;display:block;}
+.gallery-slot:hover,.gallery-slot:active{
+  border-color:rgba(240,192,96,.55);transform:scale(1.02);}
+.gallery-slot img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;
+  transition:transform .4s ease;}
+.gallery-slot:hover img{transform:scale(1.07);}
+.slot-placeholder-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:.3rem;
+  pointer-events:none;}
 .gallery-slot .slot-placeholder{
-  font-size:clamp(1.5rem,6vw,2.2rem);opacity:.4;}
+  font-size:clamp(1.3rem,5vw,1.8rem);opacity:.35;}
 .gallery-slot .slot-label{font-family:'Cinzel',serif;
-  font-size:clamp(.48rem,1.8vw,.6rem);letter-spacing:.28em;color:var(--dim);}
-.gallery-slot input[type=file]{
-  position:absolute;inset:0;opacity:0;cursor:pointer;
-  touch-action:manipulation;}
+  font-size:clamp(.42rem,1.6vw,.56rem);letter-spacing:.25em;color:var(--dim);}
 /* lightbox */
 #lightbox{position:fixed;inset:0;z-index:500;background:rgba(2,4,14,.95);
   display:none;align-items:center;justify-content:center;padding:1.5rem;}
@@ -468,7 +473,7 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
   <button id="musicBtn2" onclick="toggleMusic()">
     <span id="musicLabel">🎵 MUSIC ON</span>
   </button>
-  <input type="range" class="volume-slider" id="volSlider" min="0" max="1" step="0.05" value="0.7">
+  <input type="range" class="volume-slider" id="volSlider" min="0" max="1" step="0.05" value="0.5">
 </div>
 
 <!-- ════════════════════════════════════════
@@ -624,14 +629,8 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
     <svg class="corner c-br" viewBox="0 0 58 58" fill="none"><path d="M2 56L2 2L56 2" stroke="#f2c55c" stroke-width="1.5"/><circle cx="2" cy="2" r="3.2" fill="#f2c55c"/></svg>
 
     <div class="cbody">
-      <div class="wish-title">💌 &nbsp; Wish Wall</div>
-      <div class="wish-sub">✦ &nbsp; leave a wish for Areen &nbsp; ✦</div>
-
-      <textarea class="wish-input" id="wishInput" rows="3"
-        placeholder="Write your Eid wish for Areen..."></textarea>
-      <br>
-      <button class="wish-send-btn" onclick="sendWish()">SEND WISH &nbsp;✦</button>
-
+      <div class="wish-title">💌 &nbsp; Eid Wishes</div>
+      <div class="wish-sub">✦ &nbsp; from Fahim, with love &nbsp; ✦</div>
       <div class="wishes-list" id="wishesList"></div>
     </div>
   </div>
@@ -653,10 +652,10 @@ html,body{width:100%;min-height:100vh;background:var(--bg);
 
     <div class="cbody">
       <div class="gallery-title">📷 &nbsp; Our Memories</div>
-      <div class="gallery-sub">✦ &nbsp; tap a slot to add a photo &nbsp; ✦</div>
+      <div class="gallery-sub">✦ &nbsp; photo1.jpg → photo6.jpg &nbsp; ✦</div>
       <div class="gallery-grid" id="galleryGrid"></div>
       <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,3.5vw,1.2rem);font-style:italic;color:rgba(255,249,238,.65);margin-top:.5rem;">
-        Every photo is a memory I treasure 🌙
+        Name your photos: photo1.jpg · photo2.jpg · photo3.jpg ... photo6.jpg and place them in the same folder as this file. 🌙
       </p>
     </div>
   </div>
@@ -819,23 +818,43 @@ document.addEventListener('touchstart',e=>{
 ════════════════════════════════════════ */
 const audio=document.getElementById('bgMusic');
 let musicStarted=false,musicOn=false;
-audio.volume=0.7;
+const TARGET_VOL=0.5;
+audio.volume=0;
+
+function fadeIn(targetVol,duration){
+  const steps=50;const stepTime=duration/steps;const stepVol=targetVol/steps;
+  let cur=0;
+  const iv=setInterval(()=>{
+    cur+=stepVol;audio.volume=Math.min(cur,targetVol);
+    if(cur>=targetVol) clearInterval(iv);
+  },stepTime);
+}
+function fadeOut(duration,cb){
+  const steps=30;const stepTime=duration/steps;const startVol=audio.volume;const stepVol=startVol/steps;
+  let cur=startVol;
+  const iv=setInterval(()=>{
+    cur-=stepVol;audio.volume=Math.max(cur,0);
+    if(cur<=0){clearInterval(iv);audio.pause();if(cb)cb();}
+  },stepTime);
+}
 
 function startMusic(){
   if(musicStarted) return;
   musicStarted=true;
+  audio.volume=0;
   audio.play().then(()=>{
     musicOn=true;
+    fadeIn(TARGET_VOL,2500);
     updateMusicUI();
-  }).catch(()=>{/* silently fail if no file */});
+  }).catch(()=>{/* no music.mp3 found - silently ignore */});
 }
 
 function toggleMusic(){
-  if(!musicStarted){ startMusic(); return; }
+  if(!musicStarted){startMusic();return;}
   if(musicOn){
-    audio.pause();musicOn=false;
+    fadeOut(800);musicOn=false;
   } else {
-    audio.play();musicOn=true;
+    audio.volume=0;audio.play();fadeIn(TARGET_VOL,1500);musicOn=true;
   }
   updateMusicUI();
 }
@@ -843,20 +862,16 @@ function toggleMusic(){
 function updateMusicUI(){
   const wave=document.getElementById('mbWave');
   const lbl=document.getElementById('musicLabel');
-  if(musicOn){
-    wave.classList.add('playing');
-    lbl.textContent='🎵 MUSIC ON';
-  } else {
-    wave.classList.remove('playing');
-    lbl.textContent='🔇 MUSIC OFF';
-  }
+  if(musicOn){wave.classList.add('playing');lbl.textContent='🎵 MUSIC ON';}
+  else{wave.classList.remove('playing');lbl.textContent='🔇 MUSIC OFF';}
 }
 
 document.getElementById('volSlider').addEventListener('input',e=>{
-  audio.volume=parseFloat(e.target.value);
+  const v=parseFloat(e.target.value);audio.volume=v;
+  if(v>0&&!musicOn){musicOn=true;updateMusicUI();}
 });
 
-// Start music on very first user interaction anywhere
+// Start music on very first user interaction
 ['touchstart','click','keydown'].forEach(ev=>{
   document.addEventListener(ev,()=>startMusic(),{once:true,passive:true});
 });
@@ -915,7 +930,10 @@ const poemLines=[
    WISH WALL
 ════════════════════════════════════════ */
 const wishes=[
-  {text:'Eid Mubarak Areen! May your day be as beautiful as you are 🌙',meta:'Fahim ✦ Chand Raat 2026'},
+  {text:'Eid Mubarak, my Areen. May every star tonight carry a piece of my love to you. You make every moment brighter, and this Eid even more magical. 🌙', meta:'Fahim ✦ Chand Raat 2026'},
+  {text:'On this blessed night, I wish you a heart full of joy, a smile that never fades, and a life as beautiful as you are. Forever yours. 🌸', meta:'Fahim ✦ with all my love'},
+  {text:'Every lantern floating in the sky tonight is carrying a wish I made for you — for your happiness, your health, and endless beautiful days ahead. ✨', meta:'Fahim ✦ Chand Raat 2026'},
+  {text:'You are not just my favourite person — you are my favourite feeling. Eid Mubarak, Areen. Today, tomorrow, always. ❤️', meta:'Fahim ✦ forever'},
 ];
 function renderWishes(){
   const list=document.getElementById('wishesList');
@@ -927,46 +945,48 @@ function renderWishes(){
     list.appendChild(div);
   });
 }
-function sendWish(){
-  const inp=document.getElementById('wishInput');
-  const txt=inp.value.trim();
-  if(!txt) return;
-  const now=new Date();
-  const meta=`Guest ✦ ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
-  wishes.unshift({text:txt,meta});
-  inp.value='';
-  renderWishes();
-  // burst fireworks celebration
-  burst(W/2,H/3);
-}
+
 renderWishes();
 
 /* ════════════════════════════════════════
    PHOTO GALLERY
 ════════════════════════════════════════ */
-const photos=Array(4).fill(null);
+// ── Gallery: Put photo1.jpg, photo2.jpg ... photo6.jpg in the SAME folder ──
+// Supported formats: .jpg .jpeg .png .webp
+const GALLERY_FILES=[
+  'photo1.jpg','photo2.jpg','photo3.jpg',
+  'photo4.jpg','photo5.jpg','photo6.jpg'
+];
+
 function buildGallery(){
   const grid=document.getElementById('galleryGrid');
   grid.innerHTML='';
-  photos.forEach((src,i)=>{
-    const slot=document.createElement('div');slot.className='gallery-slot';
-    if(src){
-      const img=document.createElement('img');img.src=src;
-      img.onclick=()=>openLB(src);
-      slot.appendChild(img);
-    } else {
-      slot.innerHTML=`<span class="slot-placeholder">📷</span>
-        <span class="slot-label">ADD PHOTO</span>`;
-      const inp=document.createElement('input');
-      inp.type='file';inp.accept='image/*';
-      inp.addEventListener('change',e=>{
-        const file=e.target.files[0];if(!file) return;
-        const reader=new FileReader();
-        reader.onload=ev=>{photos[i]=ev.target.result;buildGallery();};
-        reader.readAsDataURL(file);
-      });
-      slot.appendChild(inp);
-    }
+  GALLERY_FILES.forEach((fname)=>{
+    const slot=document.createElement('div');
+    slot.className='gallery-slot';
+
+    const img=document.createElement('img');
+    img.src=fname;
+    img.alt=fname;
+    img.style.display='none';
+
+    const placeholder=document.createElement('div');
+    placeholder.className='slot-placeholder-wrap';
+    placeholder.innerHTML=`<span class="slot-placeholder">🌸</span><span class="slot-label">${fname}</span>`;
+
+    img.onload=function(){
+      placeholder.style.display='none';
+      img.style.display='block';
+      slot.onclick=()=>openLB(fname);
+      slot.style.cursor='pointer';
+    };
+    img.onerror=function(){
+      // image not found — show gentle placeholder
+      placeholder.innerHTML=`<span class="slot-placeholder" style="opacity:.25">📷</span><span class="slot-label" style="opacity:.3">${fname}</span>`;
+    };
+
+    slot.appendChild(img);
+    slot.appendChild(placeholder);
     grid.appendChild(slot);
   });
 }
